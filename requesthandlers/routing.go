@@ -13,6 +13,7 @@ func StartServer(portNumber int) (err error) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", StatusHandler)
 	mux.HandleFunc("/cx2cyjs", Cx2CyjsHandler)
+	mux.HandleFunc("/ndex2cyjs/", Ndex2CyjsHandler)
 
 	handler := cors.Default().Handler(mux)
 
