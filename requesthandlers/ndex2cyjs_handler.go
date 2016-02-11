@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"strings"
 	"log"
+	"io/ioutil"
+//	"bytes"
 )
 
 const (
@@ -30,14 +32,21 @@ func get(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Println(err)
-		return
+		http.Error(w, "could not access NDEx", 500)
 	}
 
 	defer resp.Body.Close()
 
-	log.Println("OK!: ", target)
-	log.Println(resp)
+	// Read it
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Could not access NDEx service.", 500)
+	}
 
-	cx2cyjs.Convert(resp.Body, w)
+	log.Println("GOT body: ", target)
+	bs := string(body[:])
+	cyjsReader := strings.NewReader(bs)
+
+	cx2cyjs.Convert(cyjsReader, w)
 }
 
