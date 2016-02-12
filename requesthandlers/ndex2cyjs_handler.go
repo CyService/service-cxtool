@@ -26,24 +26,22 @@ func get(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/ndex2cyjs/")
 
 	target := NDEX_URL + id + "/asCX"
-	log.Println("TARGET: ", target)
+	log.Println("About to call API: ", target)
 
 	resp, err := http.Get(target)
 
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "could not access NDEx", 500)
+		http.Error(w, "Could not access NDEx API.", 500)
 	}
 
 	defer resp.Body.Close()
 
-	// Read it
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		http.Error(w, "Could not access NDEx service.", 500)
 	}
 
-	log.Println("GOT body: ", target)
 	bs := string(body[:])
 	cyjsReader := strings.NewReader(bs)
 

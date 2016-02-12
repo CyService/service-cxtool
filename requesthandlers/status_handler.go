@@ -9,6 +9,7 @@ import (
 type Status struct {
 	Name        string `json:"name"`
 	Version     string `json:"version"`
+	Build       string `json:"build"`
 	Description string `json:"description"`
 	Documents   string `json:"documents"`
 }
@@ -19,6 +20,7 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 	serviceStatus := Status{
 		Name:"CXTOOL service",
 		Version:"v1",
+		Build: "2-11-2016",
 		Description:"Converts CX format into Cytoscape.js compatible JSON.",
 		Documents: "https://github.com/cytoscape-ci/service-cxtool",
 	}

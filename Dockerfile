@@ -7,7 +7,7 @@ WORKDIR /go
 ADD . /go/src/github.com/cytoscape-ci/service-cxtool
 WORKDIR /go/src/github.com/cytoscape-ci/service-cxtool
 
-# Install Go dependencies
+# Install GO dependencies
 RUN go get github.com/rs/cors
 RUN go get github.com/cytoscape-ci/elsa-client/reg
 RUN go get github.com/cytoscape-ci/cxtool
@@ -15,7 +15,8 @@ RUN go get github.com/cytoscape-ci/cxtool
 # Build the server for this environment
 RUN go build app.go
 
+# Default Service Port is 3000
 EXPOSE 3000
 
 # Run it!
-CMD ./app -agent http://52.35.61.6:8080/registration
+CMD ./app -agent http://ci-dev-elsa.ucsd.edu:8080/v1/service
