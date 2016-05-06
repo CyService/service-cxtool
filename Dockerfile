@@ -1,16 +1,15 @@
-FROM golang:1.5.3
+FROM golang:1.6.2
 
-# Minimalistic REST API server for Cytoscape CI
 WORKDIR /go
 
 # This is the default GOPATH for this container.
-ADD . /go/src/github.com/cytoscape-ci/service-cxtool
-WORKDIR /go/src/github.com/cytoscape-ci/service-cxtool
+ADD . /go/src/github.com/cyService/service-cxtool
+WORKDIR /go/src/github.com/cyService/service-cxtool
 
 # Install GO dependencies
 RUN go get github.com/rs/cors
-RUN go get github.com/cytoscape-ci/elsa-client/reg
-RUN go get github.com/cytoscape-ci/cxtool
+RUN go get github.com/cyService/elsa-client-go/reg
+RUN go get github.com/cyService/cxtool
 
 # Build the server for this environment
 RUN go build app.go
@@ -19,4 +18,4 @@ RUN go build app.go
 EXPOSE 3000
 
 # Run it!
-CMD ./app -agent http://ci-dev-elsa.ucsd.edu:8080/v1/service
+CMD ./app -agent http://ci-dev-serv.ucsd.edu:8080/v1/service

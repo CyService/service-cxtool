@@ -11,13 +11,19 @@ import (
 func StartServer(portNumber int) (err error) {
 
 	mux := http.NewServeMux()
+
+	// Root: Show status of service
 	mux.HandleFunc("/", StatusHandler)
+
+	// Convert CX stream into Cytoscape JS
 	mux.HandleFunc("/cx2cyjs", Cx2CyjsHandler)
+
+	// Utility to convert network stored in NDEx into Cytoscape.js
 	mux.HandleFunc("/ndex2cyjs/", Ndex2CyjsHandler)
 
 	handler := cors.Default().Handler(mux)
 
-	log.Println("Serving API on port ", portNumber)
+	log.Println("Serving cxtool API on port ", portNumber)
 
 	portNumStr := strconv.Itoa(portNumber)
 

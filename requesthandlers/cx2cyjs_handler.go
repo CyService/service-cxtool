@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 	"encoding/json"
-	"github.com/cytoscape-ci/cxtool/converter"
+	"github.com/cyService/cxtool/converter"
 	"log"
 	"errors"
 )
@@ -12,9 +12,6 @@ import (
 const (
 	GET = "GET"
 	POST = "POST"
-
-	ids = "ids"
-	idTypes = "idTypes"
 )
 
 type Message struct {

@@ -5,10 +5,9 @@ import (
 	"os"
 	"strconv"
 	"flag"
-	elsa "github.com/cytoscape-ci/elsa-client/reg"
-	handlers "github.com/cytoscape-ci/service-cxtool/requesthandlers"
+	elsa "github.com/cyService/elsa-client-go/reg"
+	handlers "github.com/cyService/service-cxtool/requesthandlers"
 )
-
 
 func main() {
 
@@ -35,7 +34,7 @@ func main() {
 	// Start API server
 	serverErr := handlers.StartServer(servicePort)
 
-	if serverErr!= nil {
+	if serverErr != nil {
 		log.Fatal("Could not start API server: ", serverErr.Error())
 		os.Exit(1)
 	}

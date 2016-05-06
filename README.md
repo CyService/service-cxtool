@@ -2,11 +2,14 @@
 
 ![](docs/cytoscape-flat-logo-orange.png)
 
-## Introduction
-This is a simple web service converting CX stream into JSON in Cytoscape.js format.
 
-## Warning!
-This service is experimental because it depends on development version of NDEx.
+## Introduction
+This is a simple web API converting CX stream into Cytoscape.js JSON.
+
+## Status
+
+* 5/6/2016Updated for new cxtool
+
 
 ## Build and Deploy
 
@@ -15,23 +18,23 @@ Of course, you can use bare metal machines, but we recommend to use Docker for q
 
 The service is tested on the following environment:
 
-* Docker Engine v 1.10.x
+* Docker Engine v 1.11.x
 * curl (Optional, but usuful to test API)
 * jq (Optional. Great tool to generate human-friendly JSON)
 
 
 ### Run in a Docker Container
 
-Make sure you are running latest version of docker engine.
+Make sure you are running latest version of docker engine:
 
 ```
-~ ❯❯❯ docker -v
-Docker version 1.10.0, build 590d5108
+~ ❯❯❯ docker -v                                                                    ✱ ◼
+Docker version 1.11.1, build 5604cbe
 ```
 
 #### Quick Start
  
-1. ```git clone https://github.com/cytoscape-ci/service-cxtool.git```
+1. ```git clone https://github.com/cyService/service-cxtool.git```
 1. ```cd service-cxtool```
 1. ```docker build -t cytoscape-ci/service-cxtool .```
 1. ```docker run -p 3000:3000 cytoscape-ci/service-cxtool```
@@ -39,32 +42,33 @@ Docker version 1.10.0, build 590d5108
 Then access root of the server for testing.  It will display basic service information:
 
 ```
-❯❯❯ curl -v 192.168.99.100:3000 | jq .                                                                           ⏎
-* Rebuilt URL to: 192.168.99.100:3000/
-*   Trying 192.168.99.100...
+❯❯❯ curl -v http://localhost:3000/ | jq .                                        ✱ ◼
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to 192.168.99.100 (127.0.0.1) port 3000 (#0)
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 3000 (#0)
 > GET / HTTP/1.1
-> Host: 192.168.99.100:3000
+> Host: localhost:3000
 > User-Agent: curl/7.43.0
 > Accept: */*
 >
 < HTTP/1.1 200 OK
 < Vary: Origin
-< Date: Thu, 11 Feb 2016 23:35:54 GMT
-< Content-Length: 172
+< Date: Fri, 06 May 2016 22:50:09 GMT
+< Content-Length: 190
 < Content-Type: text/plain; charset=utf-8
 <
-{ [172 bytes data]
-100   172  100   172    0     0    927      0 --:--:-- --:--:-- --:--:--   924
-* Connection #0 to host 192.168.99.100 left intact
+{ [190 bytes data]
+100   190  100   190    0     0  27846      0 --:--:-- --:--:-- --:--:-- 31666
+* Connection #0 to host localhost left intact
 {
-  "name": "CXTOOL service",
+  "name": "Cxtool service",
   "version": "v1",
+  "build": "05-06-2016",
   "description": "Converts CX format into Cytoscape.js compatible JSON.",
-  "documents": "https://github.com/cytoscape-ci/service-cxtool"
+  "documents": "https://github.com/cyService/service-cxtool"
 }
+
 ``` 
 
 Now you are ready to use cxtool service.
@@ -77,19 +81,19 @@ Now you are ready to use cxtool service.
 * **GET**
 
 #### Description
-Returns basic information of the service.
+Returns basic information of the API
 
 #### Sample Output
 ```json
 {
-  "name": "CXTOOL service",
+  "name": "Cxtool service",
   "version": "v1",
+  "build": "05-06-2016",
   "description": "Converts CX format into Cytoscape.js compatible JSON.",
-  "documents": "https://github.com/cytoscape-ci/service-cxtool"
+  "documents": "https://github.com/cyService/service-cxtool"
 }
 ```
 
-----
 
 ### ```/cx2cyjs```
 
@@ -100,16 +104,23 @@ Returns basic information of the service.
 Convert CX JSON into Cytoscape.js compatible format.  You can simply _POST_ complete CX data as the body of request.
 
 #### Sample Client Code
+
+**curl**
+
+```bash
+curl -X POST -v -H "content-type:application/json" --data-binary "@my_network.cx" http://localhost:3000/cx2cyjs | jq .
+```
+
 **Python**
 
 ```python
 import json, requests
 
 # URL of your service endpoint
-SERVICE_URL = "http://192.168.99.100:3000/cx2cyjs"
+SERVICE_URL = "http://localhost:3000/cx2cyjs"
 
 # Load CX file into memory
-with open('my_cx_file.cx') as f:    
+with open('my_network.cx') as f:    
     cx = json.load(f)
 
 # POST it to service
@@ -138,23 +149,19 @@ Output is a Cytoscape.js compatible JSON.  Note that the result may include _sty
                 "shape": "roundrectangle",
                 "text-opacity": 255
             }
-        },...
+        }, . . .
+    ]
 }
 ```
 
-----
 
 ### ```/ndex2cyjs/:ndex_network_id```
-
-#### WARNING
-**This API is experimental!!**
-Since this function depends on development version of external API (development version of NDEx), it may not work until they publish the final version.
 
 #### Supported methods 
 * **GET**
 
 #### Description
-Get an NDEx network in Cytoscape.js format.  Next version of [NDEx]() supports API to generate CX from network data sets.  This is an utility function to directly convert their CX data stream into Cytoscape.js compatible JSON.  You can feed the output of this API to draw NDEx network with Cytoscape.js.
+Get an NDEx network in Cytoscape.js format.  Next version of [NDEx](http://www.ndexbio.org/) supports API to generate CX from network data sets.  This is an utility function to directly convert their CX data stream into Cytoscape.js compatible JSON.  You can feed the output of this API to draw NDEx network with Cytoscape.js.
 
 #### Parameters
 
@@ -166,6 +173,16 @@ Globally unique ID of NDEx network.  For example, this network:
 has ID ```b7eb8b32-ce84-11e5-83ca-0251251672f9```.  If you want this network in Cytoscape.js format, call the following:
 
 ```/ndex2cyjs/b7eb8b32-ce84-11e5-83ca-0251251672f9```
+
+
+#### Query Parameters
+
+##### ```server```
+Server type of NDEx.  Default is **public**.  If you want to use some other official NDEx servers, you can pass this parameter.  For example, if you want to use _dev2_ server, the URL will be something like this:
+
+```
+http://localhost:3000/ndex2cyjs/a54acf93-1300-11e6-9191-0660b7976219?server=dev2
+```
 
 #### Sample Output
 
@@ -197,6 +214,9 @@ has ID ```b7eb8b32-ce84-11e5-83ca-0251251672f9```.  If you want this network in 
         },
         "selected": false
       },...
+    ]
+  }
+}
 ```
 
 ## Questions?

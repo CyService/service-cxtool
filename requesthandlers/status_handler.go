@@ -18,14 +18,14 @@ type Status struct {
 func StatusHandler(w http.ResponseWriter, r *http.Request) {
 
 	serviceStatus := Status{
-		Name:"CXTOOL service",
+		Name:"Cxtool service",
 		Version:"v1",
-		Build: "2-11-2016",
+		Build: "05-06-2016",
 		Description:"Converts CX format into Cytoscape.js compatible JSON.",
-		Documents: "https://github.com/cytoscape-ci/service-cxtool",
+		Documents: "https://github.com/cyService/service-cxtool",
 	}
 
-	if r.Method == "GET" {
+	if r.Method == GET {
 		json.NewEncoder(w).Encode(serviceStatus)
 	} else {
 		http.Error(w, "Request method must be GET.", 405)

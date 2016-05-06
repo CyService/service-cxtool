@@ -5,28 +5,41 @@ import (
 	"strings"
 	"log"
 	"io/ioutil"
-//	"bytes"
 	"encoding/json"
 )
 
 const (
-	NDEX_URL = "http://dev2.ndexbio.org/rest/network/"
+	NDEX_URL = ".ndexbio.org/rest/network/"
+	DEF_SERVER = "public"
+
+	// NDEx params
+	CXF = "asCX"
+	SERVE_KEY = "server"
 )
 
 
 func Ndex2CyjsHandler(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == "GET" {
+	if r.Method == GET {
 		get(w, r)
 	} else {
 		http.Error(w, "Request method must be GET.", 405)
 	}
 }
 
-func get(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/ndex2cyjs/")
 
-	target := NDEX_URL + id + "/asCX"
+func get(w http.ResponseWriter, r *http.Request) {
+
+	// Extract NDEx Network ID
+	id := strings.TrimPrefix(r.URL.Path, "/ndex2cyjs/")
+	query := r.URL.Query()
+	server := query.Get(SERVE_KEY)
+
+	if server == "" {
+		server = DEF_SERVER
+	}
+
+	target := "http://" + server + NDEX_URL + id + "/" + CXF
 	log.Println("Calling NDEx API: ", target)
 
 	resp, err := http.Get(target)
@@ -38,7 +51,7 @@ func get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if resp.StatusCode != 200 {
-		msg := getErrorString(resp, "NDEx API returns abnormal response.  Check status of " + target)
+		msg := getErrorString(resp, "NDEx API returns abnormal response.  Check status of NDEx: " + target)
 		http.Error(w, msg, resp.StatusCode)
 		return
 	}
